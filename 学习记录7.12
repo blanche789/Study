@@ -1,0 +1,90 @@
+
+- **File类**
+    - 类的说明：File类是用来查看文件或者创建文件的
+    - 常用的方法以及静态字符串：
+        - File.separator -->在windows系统是\,在linux系统是/
+        - File f = new File(directory, file);
+        
+                    		if(f.exists()) {
+        			System.out.println("文件路径:" + f.getAbsolutePath());
+        			System.out.println("文件大小:" + f.length());
+                    }else {
+        			f.getParentFile().mkdirs(); //这里必须调用mkdirs的方法,因为文件多个目录
+        			try {   //属于IOException,须抛出异常
+        				f.createNewFile();
+        			} catch (IOException e) {
+        				e.printStackTrace();
+        			}
+        		}
+        - f.getName();  //取得路径下的文件名或者目录名;
+        - f.isDirectory();  //判断f是否为路径名,既下一层是否还有文件;
+        - f.listFile(); //返回一个File类型的数组,既f中下一层中所包含的全部文件存储在数组中;
+        
+- **Enum类**
+	- Function:用来规定m变量的值只能为枚举的那几个值,这就有利于在编译时期就发现m是否为规定的那几个值,提前发现错误
+	
+			public enum MyColor = { red, green, white };
+			MyColor m = MyColor.red; //MyColor相当于类型,内部枚举的变量相当于是静态变量
+
+##接口
+- **Collection接口**
+	- **Set接口** ---->Hashset类     **Tips:只能装不同的对象**
+	- **List接口** ---->LinkedList类 / ArrayList类   **Tips:可以装相同的对象,既equal的两个对象**
+
+-  **Map接口** ---->HashMap类	**Tips:一对一对的装对象**
+- **容器的作用:**可以在任意时刻扩容的增加对象
+- 代码的实现:
+
+		Collection m = new HashSet(); //用父类引用指向子类对象,方便类的变换,这样使代码更加灵活
+		m.add(Object e); //往容器一增加一个对象
+		System.out.println(m.contains("hello")); //容器里是否包含某对象,返回bool值
+		System.out.println(m); //打印的原理是通过toString方法,返回对象的字符串表示
+
+### 注意:如若是通过HashSet中的add方法来装对象,如果装相同的对象,打印时会自动忽视相同的对象
+
+	package com.blanche.collection;
+
+	import java.util.ArrayList;
+	import java.util.Collection;
+	
+	public class Test2 {
+		public static void main(String[] args) {
+		Collection m = new ArrayList();
+		m.add("Hello");
+		m.add(new Name("Wu","PeiJie"));
+		m.add(new Name("Ye","SiTing"));
+		System.out.println(m.remove("Hello"));
+		System.out.println(m.remove(new Name("Ye","SiTing")));
+		}  //remove方法返回的是一个bool值,他是通过equals方法判断两个对象是否相等的,若要remove自己定义的类的对象,那么只有重写equals方法才会返回true
+	}
+	
+	class Name{
+		
+		private String firstName;
+		private String lastName;
+		public Name(String firstName,String lastName) {
+			this.firstName = firstName;
+			this.lastName = lastName;
+		}
+		
+		public  String getFirstName() {
+			return firstName;
+		}
+		public String getLastName() {
+			return lastName;
+		}
+		
+		public boolean equals(Object obj) {
+			if(obj instanceof Name) {
+			Name name = (Name) obj;
+			return (firstName.equals(name.firstName)) && (lastName.equals(name.lastName));	
+			}
+			
+			return super.equals(obj);
+		}//重写equals方法,将判断对象是否相等改写为判断对象的属性是否相等
+		
+		public int hashCode() {
+			return firstName.hashCode();
+		}//通过调用String类的hashCode方法,返回一个整数,若两个对象的lastName相等,那么hashCode自然相等
+		}
+###注意:若重写了equals方法,那么一定要重写hashCode方法,因为若对象相等了,他们的哈希码应该相等,hashCode方法对于key - value比较高效,可以迅速找到索引
